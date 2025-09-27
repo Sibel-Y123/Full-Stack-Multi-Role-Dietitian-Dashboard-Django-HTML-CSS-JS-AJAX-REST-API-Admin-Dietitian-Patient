@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dashboard</title>
+
+    <!-- Bootstrap & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+
+    <!-- Add icon library -->
+
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- ApexCharts -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+    <style>
+        :root {
+            --navbar-height: 56px;
+            --sidebar-width: clamp(220px, 20vw, 280px);
+            --sidebar-collapsed-width: 80px;
+            --card: #ffffff;
+            --shadow: 0 10px 30px rgba(15, 23, 42, .06);
+            --radius: 14px;
+            --transition: all 0.3s ease;
+            --footer-height: 60px;
+            --primary: #4361ee;
+            --success: #2ecc71;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --info: #3498db;
+        }
+
+        /* Base */
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            margin: 0;
+            padding-top: var(--navbar-height);
+            background: #f8f9fa;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navbar */
+        .navbar {
+            height: var(--navbar-height);
+            background: #fff !important;
+            border-bottom: 1px solid rgba(15, 23, 42, .08);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            transition: var(--transition);
+        }
+
+        .sidebar.collapsed .avatar-wrapper {
+            left: 3rem;
+            /* toggle butonunun hemen sağına hizala */
+            transform: translate(0, -50%);
+            /* yatay ortalama kaldır */
+        }
+
+        .avatar-wrapper {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.3s ease;
+        }
+
+        .offcanvas-header {
+            position: relative;
+        }
+
+        .sidebar.collapsed .avatar-wrapper img {
+            width: 30px;
+            height: 30px;
+        }
+
+
+
+        /* Sidebar */
+        .sidebar {
+            --bs-offcanvas-width: var(--sidebar-width);
+            background: linear-gradient(180deg, #1d2b47 0%, #142036 100%);
+            color: #e5e7eb;
+            transition: var(--transition);
+        }
+
+        .sidebar.collapsed {
+            --bs-offcanvas-width: var(--sidebar-collapsed-width);
+        }
+
+        .sidebar .offcanvas-header {
+            border-bottom: 1px solid rgba(255, 255, 255, .08);
+            padding: 1rem 1.25rem;
+            justify-content: center;
+        }
+
+        .sidebar.collapsed .offcanvas-header {
+            padding: 1rem 0.5rem;
+        }
+
+        .sidebar .nav-link {
+            color: #e5e7eb;
+            border-radius: 10px;
+            padding: .55rem .75rem;
+            margin-bottom: .35rem;
+            font-weight: 500;
+            transition: var(--transition);
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .sidebar.collapsed .nav-link {
+            padding: 0.55rem;
+            text-align: center;
+        }
+
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link:focus {
+            background: rgba(255, 255, 255, .08);
+            color: #fff;
+        }
+
+        .sidebar .nav-link.active {
+            background: linear-gradient(90deg, rgba(13, 110, 253, .35), rgba(13, 110, 253, .15));
+            box-shadow: inset 2px 0 0 #60a5fa;
+            color: #fff;
+        }
+
+        .sidebar .nav-link i {
+            margin-right: 0.75rem;
+            transition: var(--transition);
+        }
+
+        .sidebar.collapsed .nav-link i {
+            margin-right: 0;
+            font-size: 1.25rem;
+        }
+
+        /* Menü yazılarını sidebar collapse durumunda gizle */
+        .sidebar.collapsed .nav-link span {
+            display: none;
+        }
+
+        .sidebar.collapsed .logout-btn span {
+            display: none;
+        }
+
+        /* Logout button */
+        .logout-btn {
+            margin-top: 0;
+            padding: 1rem 0;
+            border-top: 1px solid rgba(255, 255, 255, .08);
+            transition: var(--transition);
+        }
+
+        .logout-btn a {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(255, 255, 255, .08);
+            color: #fff !important;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: var(--transition);
+            width: 100%;
+        }
+
+        .sidebar.collapsed .logout-btn a {
+            justify-content: center;
+            padding: 0.5rem;
+        }
+
+        .logout-btn a:hover {
+            background: rgba(255, 255, 255, .15);
+        }
+
+        .logout-btn i {
+            margin-right: 0.5rem;
+            transition: var(--transition);
+        }
+
+        .sidebar.collapsed .logout-btn i {
+            margin-right: 0;
+            font-size: 1.25rem;
+        }
+
+        /* Sidebar responsive */
+        @media (min-width: 992px) {
+            .sidebar {
+                position: fixed;
+                top: var(--navbar-height);
+                left: 0;
+                height: auto;
+                min-height: calc(100vh - var(--navbar-height) - var(--footer-height));
+                transform: none !important;
+                visibility: visible !important;
+                display: flex;
+                flex-direction: column;
+                box-shadow: inset -1px 0 0 rgba(255, 255, 255, .06);
+            }
+
+            .sidebar .offcanvas-header {
+                display: flex;
+            }
+
+            .sidebar .offcanvas-body {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                padding: 1.25rem;
+                overflow-y: visible;
+            }
+
+            main {
+                margin-left: var(--sidebar-width);
+                transition: var(--transition);
+                flex: 1;
+                margin-bottom: var(--footer-height);
+            }
+
+            .sidebar.collapsed+main {
+                margin-left: var(--sidebar-collapsed-width);
+            }
+
+            .sidebar-toggle {
+                display: block !important;
+            }
+        }
+
+        /* Main content */
+        main {
+            padding: 1.5rem;
+            min-height: calc(100vh - var(--navbar-height) - var(--footer-height));
+            transition: var(--transition);
+            flex: 1;
+        }
+
+        .main-content {
+            background: #fff;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card);
+            border: 0;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-14px);
+            box-shadow: 0 14px 32px rgba(15, 23, 42, .10);
+        }
+
+
+
+        /* Stats Cards */
+        .stat-card {
+            display: flex;
+            align-items: center;
+            padding: 1.25rem;
+            border-left: 4px solid var(--primary);
+        }
+
+        .stat-card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-size: 1.25rem;
+            color: white;
+        }
+
+        .stat-card-primary .stat-card-icon {
+            background-color: var(--primary);
+        }
+
+        .stat-card-success .stat-card-icon {
+            background-color: var(--success);
+        }
+
+        .stat-card-danger .stat-card-icon {
+            background-color: var(--danger);
+        }
+
+        .stat-card-warning .stat-card-icon {
+            background-color: var(--warning);
+        }
+
+        .stat-card-info .stat-card-icon {
+            background-color: var(--info);
+        }
+
+        .stat-card-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        .stat-card-label {
+            color: #6c757d;
+            font-size: 0.875rem;
+        }
+
+
+
+        /* Charts */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+
+
+
+
+
+
+        /* Sidebar toggle button */
+        .sidebar-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.25rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .sidebar-toggle:hover {
+            background: rgba(255, 255, 255, .1);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 991.98px) {
+            .offcanvas-body {
+                padding: 1rem !important;
+            }
+
+            .welcome {
+                display: block !important;
+            }
+
+            .sidebar-toggle {
+                display: block !important;
+            }
+
+            main {
+                margin-bottom: var(--footer-height);
+            }
+        }
+
+        @media (max-width: 767.98px) {
+
+
+            .main-content {
+                padding: 1.5rem 1rem;
+            }
+
+            .stat-card {
+                padding: 1rem;
+            }
+
+            .stat-card-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+
+            .stat-card-value {
+                font-size: 1.25rem;
+            }
+
+
+        }
+
+        /* Animation reduction */
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+        <div class="container-fluid px-3 px-lg-4">
+            <!-- Sol taraf -->
+            <div class="d-flex align-items-center">
+                <button class="navbar-toggler me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar"
+                    aria-controls="sidebar">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+            </div>
+
+            <!-- Sağ taraf -->
+            <div class="d-flex align-items-center ms-auto gap-2">
+                <button class="btn btn-outline-secondary btn-sm rounded-circle"><i class="bi bi-bell"></i></button>
+                <button class="btn btn-outline-secondary btn-sm rounded-circle"><i class="bi bi-gear"></i></button>
+                <a class="btn btn-sm d-lg-none" href="{% url 'logout' %}"><i class="bi bi-box-arrow-right"></i></a>
+                <a class="btn btn-sm d-none d-lg-inline-flex" href="{% url 'logout' %}"><i
+                        class="bi bi-box-arrow-right me-1"></i>Logout</a>
+            </div>
+        </div>
+    </nav>
+
+
+
+    <!-- Sidebar -->
+    <div id="sidebar" class="offcanvas offcanvas-start sidebar" tabindex="-1">
+
+        <div class="offcanvas-header d-flex align-items-center justify-content-between position-relative">
+            <!-- Sol Toggle Buton -->
+            <div class="d-flex align-items-center">
+                <button class="sidebar-toggle" id="toggleSidebar">
+                    <i class="bi bi-list"></i>
+                </button>
+            </div>
+
+            <!-- Ortadaki Avatar -->
+            <div class="mx-auto">
+                <img src="https://i.pravatar.cc/100?u={{ user.username }}" alt="User Avatar" class="rounded-circle img-fluid"
+                    style="width:60px; height:60px; object-fit:cover;">
+            </div>
+
+            <!-- Sağ Close Buton -->
+            <div class="d-flex align-items-center">
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+            </div>
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+        <div class="offcanvas-body d-flex flex-column justify-content-between">
+            <div>
+                <div class="text-center fw-bold my-3 welcome">Menu</div>
+                <ul class="nav flex-column">
+                    {% if user.is_authenticated %}
+                    {% if user.role == 'admin' %}
+                    <li class="nav-item"><a class="nav-link " href="{% url 'dashboard' %}"><i
+                                class="bi bi-speedometer2"></i><span class="ms-2">Dashboard</span></a></li>
+                    <li class="nav-item"><a class="nav-link w-100" href="{% url 'user_list' %}"><i
+                                class="bi bi-people"></i><span class="ms-2">Manage Users</span></a></li>
+                    {% elif user.role == 'dietitian' %}
+                    <li class="nav-item"><a class="nav-link " href="{% url 'dietitian_dashboard' %}"><i
+                                class="bi bi-speedometer2"></i><span class="ms-2">Dashboard</span></a></li>
+                    <li class="nav-item"><a class="nav-link w-100" href="{% url 'diet_plan_list' %}"><i
+                                class="bi bi-journal-text"></i><span class="ms-2">Diet Plans</span></a></li>
+                    
+                                
+                    <li class="nav-item"><a class="nav-link w-100" href="{% url 'food_list' %}"><i
+                                class="bi bi-chat-left-text"></i><span class="ms-2">Food</span></a></li>
+                    <li class="nav-item"><a class="nav-link w-100" href="{% url 'meal_list' %}"><i
+                                class="bi bi-egg-fried"></i><span class="ms-2">Meals</span></a></li>
+                    <li class="nav-item"><a class="nav-link w-100" href="{% url 'message_list' %}"><i
+                                class="bi bi-chat-left-text"></i><span class="ms-2">Messages</span></a></li>
+                    <li class="nav-item"><a class="nav-link w-100" href="{% url 'customer_list' %}"><i
+                                class="bi bi-person-lines-fill"></i><span class="ms-2">Manage Patients</span></a></li>
+                    {% elif user.role == 'patient' %}
+                    <li class="nav-item"><a class="nav-link w-100" href="{% url 'patient_dashboard' %}"><i
+                                class="bi bi-speedometer2"></i><span class="ms-2">Dashboard</span></a></li>
+                    <li class="nav-item"><a class="nav-link w-100" href="{% url 'meal_list' %}"><i
+                                class="bi bi-egg-fried"></i><span class="ms-2">My Meals</span></a></li>
+                    <li class="nav-item"><a class="nav-link w-100" href="{% url 'message_list' %}"><i
+                                class="bi bi-chat-left-text"></i><span class="ms-2">Messages</span></a></li>
+                    <li class="nav-item"><a class="nav-link w-100" href="{% url 'diet_plan_list' %}"><i
+                                class="bi bi-journal-text"></i><span class="ms-2">Diet Plans</span></a></li>
+                    {% endif %}
+                    {% endif %}
+                </ul>
+            </div>
+            {% if user.is_authenticated %}
+            <div class="logout-btn">
+                <a href="{% url 'logout' %}"><i class="bi bi-box-arrow-right"></i><span class="ms-2">Logout</span></a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Main -->
+    <main>
+        <div class="main-content">
+
+            <h1 class="mb-4">Welcome {{ user.username }}</h1>
+            <p class="text-muted">This is your personalized dashboard. Use the menu to navigate between features.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+            <div class="row mt-4">
+                <div class="col-md-6 col-lg-3 mb-4">
+                    <div class="card stat-card stat-card-primary h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="stat-card-icon">
+                                    <i class="bi bi-people-fill"></i>
+                                </div>
+                                <div>
+                                    <div class="stat-card-value" id="total-users">0</div>
+                                    <div class="stat-card-label">Total Users</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-3 mb-4">
+                    <div class="card stat-card stat-card-success h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="stat-card-icon">
+                                    <i class="bi bi-person-check"></i>
+                                </div>
+                                <div>
+                                    <div class="stat-card-value" id="active-users">0</div>
+                                    <div class="stat-card-label">Active Users</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-3 mb-4">
+                    <div class="card stat-card stat-card-warning h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="stat-card-icon">
+                                    <i class="bi bi-person-plus"></i>
+                                </div>
+                                <div>
+                                    <div class="stat-card-value" id="new-users">0</div>
+                                    <div class="stat-card-label">New Users (7d)</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-3 mb-4">
+                    <div class="card stat-card stat-card-info h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="stat-card-icon">
+                                    <i class="bi bi-clock-history"></i>
+                                </div>
+                                <div>
+                                    <div class="stat-card-value" id="recent-logins">0</div>
+                                    <div class="stat-card-label">Recent Logins (24h)</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+            <!-- Kullanıcı Kayıt Grafiği -->
+            <div class="row">
+                <!-- User Registrations -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">User Registrations</h5>
+                            <p class="text-muted">Last 30 days registration trend</p>
+                            <div class="chart-container">
+                                <canvas id="registrations-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Roles -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">User Roles</h5>
+                            <p class="text-muted">Distribution by user roles</p>
+                            <div class="chart-container">
+                                <canvas id="roles-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Activity -->
+                <div class="col-lg-4 col-md-12 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">User Activity</h5>
+                            <p class="text-muted">Daily activity overview</p>
+                            <div class="chart-container" style="height: 350px;">
+                                <canvas id="activity-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+    </main>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+
+            // Grafikler için değişkenler
+            let registrationsChart, rolesChart, activityChart;
+
+            // API'den veri çekme fonksiyonu
+            function fetchDashboardData() {
+                fetch('/api/user-stats/')
+                    .then(response => response.json())
+                    .then(data => {
+                        updateStats(data);
+                        updateCharts(data);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching data:', error);
+                    });
+            }
+
+            // İstatistikleri güncelle
+            function updateStats(data) {
+                document.getElementById('total-users').textContent = data.total_users;
+                document.getElementById('active-users').textContent = data.active_users;
+                document.getElementById('new-users').textContent = data.new_users;
+                document.getElementById('recent-logins').textContent = data.recent_logins;
+            }
+
+            // Grafikleri güncelle
+            function updateCharts(data) {
+                // Kayıt grafiğini güncelle
+                registrationsChart.data.labels = data.registration_dates;
+                registrationsChart.data.datasets[0].data = data.registration_counts;
+                registrationsChart.update();
+
+                // Rol dağılım grafiğini güncelle
+                rolesChart.data.labels = data.roles.labels;
+                rolesChart.data.datasets[0].data = data.roles.values;
+                rolesChart.update();
+
+                // Aktivite grafiğini güncelle
+                activityChart.data.labels = data.activity.labels;
+                activityChart.data.datasets[0].data = data.activity.logins;
+                activityChart.data.datasets[1].data = data.activity.registrations;
+                activityChart.update();
+            }
+
+            // Grafikleri başlat
+            function initCharts() {
+                // Kayıt grafiği
+                const regCtx = document.getElementById('registrations-chart').getContext('2d');
+                registrationsChart = new Chart(regCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: [],
+                        datasets: [{
+                            label: 'Daily Registrations',
+                            data: [],
+                            backgroundColor: 'rgba(67, 97, 238, 0.7)',
+                            borderColor: 'rgba(67, 97, 238, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false,
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+
+                // Rol dağılım grafiği
+                const rolesCtx = document.getElementById('roles-chart').getContext('2d');
+                rolesChart = new Chart(rolesCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: [],
+                        datasets: [{
+                            data: [],
+                            backgroundColor: [
+                                'rgba(67, 97, 238, 0.7)',
+                                'rgba(46, 204, 113, 0.7)',
+                                'rgba(243, 156, 18, 0.7)'
+                            ],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'right'
+                            }
+                        },
+                        cutout: '70%'
+                    }
+                });
+
+                // Aktivite grafiği
+                const activityCtx = document.getElementById('activity-chart').getContext('2d');
+                activityChart = new Chart(activityCtx, {
+                    type: 'line',
+                    data: {
+                        labels: [],
+                        datasets: [
+                            {
+                                label: 'Daily Logins',
+                                data: [],
+                                borderColor: '#4361ee',
+                                backgroundColor: 'rgba(67, 97, 238, 0.1)',
+                                borderWidth: 2,
+                                tension: 0.3,
+                                fill: true
+                            },
+                            {
+                                label: 'Daily Registrations',
+                                data: [],
+                                borderColor: '#2ecc71',
+                                backgroundColor: 'rgba(46, 204, 113, 0.1)',
+                                borderWidth: 2,
+                                tension: 0.3,
+                                fill: true
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Sayfa yüklendiğinde grafikleri başlat ve verileri çek
+            initCharts();
+            fetchDashboardData();
+
+            // Her 30 saniyede bir verileri güncelle
+            setInterval(fetchDashboardData, 30000);
+        });
+
+
+    </script>
+    <script>// Sidebar toggle functionality
+        document.getElementById('toggleSidebar').addEventListener('click', function () {
+            document.getElementById('sidebar').classList.toggle('collapsed');
+        });
+        ;</script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const closeBtn = document.querySelector('.btn-close');
+        const sidebarEl = document.getElementById('sidebar');
+
+        closeBtn.addEventListener('click', () => {
+            sidebarEl.classList.toggle('collapsed'); // toggle ile aç/kapa
+        });</script>
+
+</body>
+
+</html>
