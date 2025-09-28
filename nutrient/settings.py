@@ -141,7 +141,7 @@ LOGIN_URL = '/mylogin/'
 
 
 
-USDA_API_KEY = "klJfcWAdbqMwakrBe9rqVMBUtSfhhLLiV9vcO7Pb"
+USDA_API_KEY = "enter your Apikey"
 
 
 
