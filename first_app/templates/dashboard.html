@@ -6,16 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Dashboard</title>
 
-    <!-- Bootstrap & Icons -->
+   
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
 
-    <!-- Add icon library -->
+ 
 
 
-    <!-- Chart.js -->
+    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- ApexCharts -->
+ 
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
     <style>
@@ -35,13 +35,13 @@
             --info: #3498db;
         }
 
-        /* Base */
+       
         html,
         body {
             height: 100%;
-        }
+        
 
-        body {
+        
             margin: 0;
             padding-top: var(--navbar-height);
             background: #f8f9fa;
@@ -51,7 +51,7 @@
             flex-direction: column;
         }
 
-        /* Navbar */
+   
         .navbar {
             height: var(--navbar-height);
             background: #fff !important;
@@ -86,7 +86,7 @@
 
 
 
-        /* Sidebar */
+   
         .sidebar {
             --bs-offcanvas-width: var(--sidebar-width);
             background: linear-gradient(180deg, #1d2b47 0%, #142036 100%);
@@ -155,7 +155,7 @@
             display: none;
         }
 
-        /* Logout button */
+     
         .logout-btn {
             margin-top: 0;
             padding: 1rem 0;
@@ -194,7 +194,7 @@
             font-size: 1.25rem;
         }
 
-        /* Sidebar responsive */
+      
         @media (min-width: 992px) {
             .sidebar {
                 position: fixed;
@@ -237,7 +237,7 @@
             }
         }
 
-        /* Main content */
+    
         main {
             padding: 1.5rem;
             min-height: calc(100vh - var(--navbar-height) - var(--footer-height));
@@ -255,7 +255,7 @@
             margin: 0 auto;
         }
 
-        /* Cards */
+   
         .card {
             background: var(--card);
             border: 0;
@@ -273,7 +273,7 @@
 
 
 
-        /* Stats Cards */
+      
         .stat-card {
             display: flex;
             align-items: center;
@@ -326,7 +326,6 @@
 
 
 
-        /* Charts */
         .chart-container {
             position: relative;
             height: 300px;
@@ -338,7 +337,7 @@
 
 
 
-        /* Sidebar toggle button */
+      
         .sidebar-toggle {
             display: none;
             background: none;
@@ -355,7 +354,7 @@
             background: rgba(255, 255, 255, .1);
         }
 
-        /* Responsive adjustments */
+       
         @media (max-width: 991.98px) {
             .offcanvas-body {
                 padding: 1rem !important;
@@ -398,16 +397,16 @@
 
         }
 
-        /* Animation reduction */
+      
     </style>
 </head>
 
 <body>
 
-    <!-- Navbar -->
+   
     <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
         <div class="container-fluid px-3 px-lg-4">
-            <!-- Sol taraf -->
+           
             <div class="d-flex align-items-center">
                 <button class="navbar-toggler me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar"
                     aria-controls="sidebar">
@@ -416,7 +415,7 @@
 
             </div>
 
-            <!-- Sağ taraf -->
+         
             <div class="d-flex align-items-center ms-auto gap-2">
                 <button class="btn btn-outline-secondary btn-sm rounded-circle"><i class="bi bi-bell"></i></button>
                 <button class="btn btn-outline-secondary btn-sm rounded-circle"><i class="bi bi-gear"></i></button>
@@ -429,7 +428,7 @@
 
 
 
-    <!-- Sidebar -->
+  
     <div id="sidebar" class="offcanvas offcanvas-start sidebar" tabindex="-1">
 
         <div class="offcanvas-header d-flex align-items-center justify-content-between position-relative">
@@ -440,13 +439,13 @@
                 </button>
             </div>
 
-            <!-- Ortadaki Avatar -->
+          
             <div class="mx-auto">
                 <img src="https://i.pravatar.cc/100?u={{ user.username }}" alt="User Avatar" class="rounded-circle img-fluid"
                     style="width:60px; height:60px; object-fit:cover;">
             </div>
 
-            <!-- Sağ Close Buton -->
+          
             <div class="d-flex align-items-center">
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
             </div>
@@ -508,7 +507,7 @@
         </div>
     </div>
 
-    <!-- Main -->
+   
     <main>
         <div class="main-content">
 
@@ -595,7 +594,6 @@
 
 
 
-            <!-- Kullanıcı Kayıt Grafiği -->
             <div class="row">
                 <!-- User Registrations -->
                 <div class="col-lg-4 col-md-6 mb-4">
@@ -610,7 +608,7 @@
                     </div>
                 </div>
 
-                <!-- User Roles -->
+            
                 <div class="col-lg-4 col-md-6 mb-4">
                     <div class="card h-100">
                         <div class="card-body">
@@ -623,7 +621,7 @@
                     </div>
                 </div>
 
-                <!-- User Activity -->
+                
                 <div class="col-lg-4 col-md-12 mb-4">
                     <div class="card h-100">
                         <div class="card-body">
@@ -644,10 +642,8 @@
         document.addEventListener('DOMContentLoaded', function () {
 
 
-            // Grafikler için değişkenler
             let registrationsChart, rolesChart, activityChart;
 
-            // API'den veri çekme fonksiyonu
             function fetchDashboardData() {
                 fetch('/api/user-stats/')
                     .then(response => response.json())
@@ -660,7 +656,6 @@
                     });
             }
 
-            // İstatistikleri güncelle
             function updateStats(data) {
                 document.getElementById('total-users').textContent = data.total_users;
                 document.getElementById('active-users').textContent = data.active_users;
@@ -668,28 +663,28 @@
                 document.getElementById('recent-logins').textContent = data.recent_logins;
             }
 
-            // Grafikleri güncelle
+         
             function updateCharts(data) {
-                // Kayıt grafiğini güncelle
+                
                 registrationsChart.data.labels = data.registration_dates;
                 registrationsChart.data.datasets[0].data = data.registration_counts;
                 registrationsChart.update();
 
-                // Rol dağılım grafiğini güncelle
+              
                 rolesChart.data.labels = data.roles.labels;
                 rolesChart.data.datasets[0].data = data.roles.values;
                 rolesChart.update();
 
-                // Aktivite grafiğini güncelle
+            
                 activityChart.data.labels = data.activity.labels;
                 activityChart.data.datasets[0].data = data.activity.logins;
                 activityChart.data.datasets[1].data = data.activity.registrations;
                 activityChart.update();
             }
 
-            // Grafikleri başlat
+         
             function initCharts() {
-                // Kayıt grafiği
+                
                 const regCtx = document.getElementById('registrations-chart').getContext('2d');
                 registrationsChart = new Chart(regCtx, {
                     type: 'bar',
@@ -719,7 +714,7 @@
                     }
                 });
 
-                // Rol dağılım grafiği
+             
                 const rolesCtx = document.getElementById('roles-chart').getContext('2d');
                 rolesChart = new Chart(rolesCtx, {
                     type: 'doughnut',
@@ -747,7 +742,7 @@
                     }
                 });
 
-                // Aktivite grafiği
+               
                 const activityCtx = document.getElementById('activity-chart').getContext('2d');
                 activityChart = new Chart(activityCtx, {
                     type: 'line',
@@ -791,17 +786,17 @@
                 });
             }
 
-            // Sayfa yüklendiğinde grafikleri başlat ve verileri çek
+          
             initCharts();
             fetchDashboardData();
 
-            // Her 30 saniyede bir verileri güncelle
+            
             setInterval(fetchDashboardData, 30000);
         });
 
 
     </script>
-    <script>// Sidebar toggle functionality
+    <script>
         document.getElementById('toggleSidebar').addEventListener('click', function () {
             document.getElementById('sidebar').classList.toggle('collapsed');
         });
@@ -812,7 +807,7 @@
         const sidebarEl = document.getElementById('sidebar');
 
         closeBtn.addEventListener('click', () => {
-            sidebarEl.classList.toggle('collapsed'); // toggle ile aç/kapa
+            sidebarEl.classList.toggle('collapsed'); 
         });</script>
 
 </body>
